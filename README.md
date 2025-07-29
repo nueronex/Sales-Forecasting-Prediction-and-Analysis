@@ -9,7 +9,7 @@
 
 ---
 
-📌 Project Objectives
+### 📌 Project Objectives
 
 Forecast future sales using machine learning models.
 
@@ -23,7 +23,7 @@ Improve inventory management and marketing strategy with insights.
 
 ---
 
-🛠 Tools and Technologies Used
+### 🛠 Tools and Technologies Used
 
 Programming Language: Python
 
@@ -39,7 +39,7 @@ Version Control: Git & GitHub
 
 ---
 
-🧪 Project Workflow
+### 🧪 Project Workflow
 
 1. Data Collection
 
@@ -116,7 +116,9 @@ Sales-Forecasting-Prediction-and-Analysis/
 
 
 ---
-Innovative Member 
+### Innovative Member 
+
+----
 
 
 
@@ -147,7 +149,7 @@ pip install -r requirements.txt
 
 ---
 
-📌 Future Scope
+### 📌 Future Scope
 
 Integrate real-time data for live forecasting
 
@@ -163,7 +165,7 @@ Include external factors like promotions, holidays, etc.
 
 ---
 
-🙌 Acknowledgements
+### 🙌 Acknowledgements
 
 Thanks to open-source contributors and datasets used in the project.
 
