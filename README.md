@@ -139,7 +139,7 @@ Sales-Forecasting-Prediction-and-Analysis/
 
 1. Clone the repository
 
-git clone https://github.com/yourusername/Sales-Forecasting-Prediction-and-Analysis.git
+git clone https://github.com/neuronex/Sales-Forecasting-Prediction-and-Analysis.git
 
 
 2. Navigate to the project folder
