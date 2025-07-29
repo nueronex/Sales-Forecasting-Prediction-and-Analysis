@@ -2,9 +2,9 @@
 
 
 
-📈 Sales Forecasting Prediction and Analysis
+## 📈 Sales Forecasting Prediction and Analysis
 
-This project involves predicting future sales using historical data and analyzing key sales trends. It applies data preprocessing, visualization, and machine learning techniques to forecast sales and extract insights that help in better business decision-making.
+### This project involves predicting future sales using historical data and analyzing key sales trends. It applies data preprocessing, visualization, and machine learning techniques to forecast sales and extract insights that help in better business decision-making.
 
 
 ---
