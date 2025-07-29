@@ -116,7 +116,15 @@ Sales-Forecasting-Prediction-and-Analysis/
 
 
 ---
-### Innovative Member 
+### Innovative Member  
+
+1. Saud Rana – Lead Data Scientist & Full Stack Developer
+
+2.Twisha Shah – Data Analyst & Model Evaluator
+
+3.Yuvraj Shah – Software Engineer & Deployment Specialist
+
+4.Dhaval Subdhesha – Cloud Integration & Web Hosting Expert
 
 ----
 
@@ -125,7 +133,7 @@ Sales-Forecasting-Prediction-and-Analysis/
 
 
 
-🚀 How to Run
+### 🚀 How to Run
 
 1. Clone the repository
 
