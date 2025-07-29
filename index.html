@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sales Forecasting App</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <title>Sales Forecasting Tool</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1>Sales Forecasting Tool</h1>
-    <form method="POST">
+    <form action="/predict" method="POST">
       <label>Product:</label>
-      <input type="text" name="product" required>
+      <input type="text" name="product" required />
+
       <label>Category:</label>
-      <input type="text" name="category" required>
+      <input type="text" name="category" required />
+
       <label>Quantity:</label>
-      <input type="number" name="quantity" step="1" required>
-      <label>Price per Unit:</label>
-      <input type="number" name="price" step="0.01" required>
-      <label>Customer Rating (out of 5):</label>
-      <input type="number" name="rating" step="0.1" min="0" max="5" required>
-      <label>Delivery Time (in days):</label>
-      <input type="number" name="delivery_time" step="1" required>
+      <input type="number" name="quantity" required />
+
+      <label>Price:</label>
+      <input type="number" name="price" required />
+
+      <label>Rating:</label>
+      <input type="number" name="rating" required />
+
+      <label>Delivery Time:</label>
+      <input type="number" name="delivery_time" required />
+
       <button type="submit">Predict</button>
     </form>
-
-    {% if prediction %}
-      <div class="result">
-      </div>
-  </div>
+  </div>     
 </body>
 </html>
