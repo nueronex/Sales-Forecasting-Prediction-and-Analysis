@@ -88,7 +88,7 @@ Plotting sales trends, forecast results, and performance metrics
 
 ---
 
-📊 Results
+### 📊 Results
 
 Achieved accurate forecasting of sales over future periods.
 
@@ -118,13 +118,15 @@ Sales-Forecasting-Prediction-and-Analysis/
 ---
 ### Innovative Member  
 
-1. Saud Rana – Lead Data Scientist & Full Stack Developer
+1.Saud Rana – Lead Data Scientist & Full Stack Developer
 
 2.Twisha Shah – Data Analyst & Model Evaluator
 
 3.Yuvraj Shah – Software Engineer & Deployment Specialist
 
 4.Dhaval Subdhesha – Cloud Integration & Web Hosting Expert
+
+
 
 ----
 
