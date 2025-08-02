@@ -2,33 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Sales Forecasting Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sales Forecasting Dashboard</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>Sales Forecasting Tool</h1>
-    <form action="/predict" method="POST">
-      <label>Product:</label>
-      <input type="text" name="product" required />
+  <div class="header">
+    <h1>Sales Forecasting Dashboard</h1>
+    <h2> Powered by : Neuronex </h2>
+    <p>Predict future revenue and optimize your strategy</p>
+  </div>
 
-      <label>Category:</label>
-      <input type="text" name="category" required />
+  <div class="dashboard-container">
+    <div class="card">
+      <h3>Next Month Forecast</h3>
+      <p id="forecastValue">Estimated Revenue: ₹1,20,000</p>
+    </div>
 
-      <label>Quantity:</label>
-      <input type="number" name="quantity" required />
+    <div class="card chart-container">
+      <canvas id="salesChart"></canvas>
+    </div>
+  </div>
 
-      <label>Price:</label>
-      <input type="number" name="price" required />
+  <div style="text-align: center; margin-top: 30px;">
+    <button class="button" onclick="generateForecast()">Generate New Forecast</button>
+  </div>
 
-      <label>Rating:</label>
-      <input type="number" name="rating" required />
-
-      <label>Delivery Time:</label>
-      <input type="number" name="delivery_time" required />
-
-      <button type="submit">Predict</button>
-    </form>
-  </div>     
+  <script src="script.js"></script>
 </body>
 </html>
