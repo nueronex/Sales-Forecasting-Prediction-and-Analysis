@@ -2,33 +2,451 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sales Forecasting Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Forecasting · Prediction & Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020;/* dark base */
+      --panel:#121831;/* panels */
+      --muted:#98a2b3;
+      --accent:#7c3aed;/* purple */
+      --accent-2:#06b6d4;/* cyan */
+      --success:#22c55e;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --card:#0f1530;
+      --border:rgba(255,255,255,0.08);
+      --text:#eaf0ff;
+      --text-2:#c7d2fe;
+      --shadow:0 10px 25px rgba(0,0,0,.35);
+    }
+    :root.light{
+      --bg:#f7f8fc;
+      --panel:#ffffff;
+      --muted:#475467;
+      --accent:#6d28d9;
+      --accent-2:#0891b2;
+      --success:#16a34a;
+      --warning:#d97706;
+      --danger:#dc2626;
+      --card:#ffffff;
+      --border:rgba(2,6,23,0.08);
+      --text:#0b1020;
+      --text-2:#334155;
+      --shadow:0 10px 25px rgba(2,6,23,.08);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:linear-gradient(120deg, #0c132d, #0b1020 40%, #0c132d 80%);
+      background-size: 200% 200%;
+      animation: bg-pan 18s infinite linear;
+      color:var(--text);
+    }
+    @keyframes bg-pan{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    .app{
+      display:grid;grid-template-columns: 280px 1fr;min-height:100vh;
+    }
+    aside{
+      position:sticky;top:0;height:100vh;overflow:auto;
+      background:linear-gradient(180deg, rgba(124,58,237,.12), transparent 30%), var(--panel);
+      border-right:1px solid var(--border);
+      padding:22px 18px;
+    }
+    header{
+      display:flex;align-items:center;gap:14px;justify-content:space-between;
+      border-bottom:1px solid var(--border);
+      padding:16px 24px;background:linear-gradient(90deg, rgba(6,182,212,.06), rgba(124,58,237,.06));
+      backdrop-filter: blur(6px);
+      position:sticky;top:0;z-index:5;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background:conic-gradient(from 180deg, var(--accent), var(--accent-2), var(--accent));
+      box-shadow: inset 0 0 30px rgba(255,255,255,.14), 0 10px 16px rgba(124,58,237,.25);
+      animation: spin-slow 18s linear infinite;
+    }
+    @keyframes spin-slow {to{transform: rotate(360deg)}}
+    .title{font-weight:800;letter-spacing:.2px}
+    .subtitle{font-size:12px;color:var(--muted)}
+
+    .sidebar-group{margin:18px 0}
+    .sidebar-label{font-size:12px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+    .nav-btn{
+      width:100%;text-align:left;background:transparent;border:1px solid var(--border);color:var(--text);
+      padding:12px 14px;border-radius:14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px;
+      transition:transform .2s ease, border .2s ease, background .2s ease;position:relative;overflow:hidden
+    }
+    .nav-btn:hover{transform:translateY(-2px);border-color:rgba(124,58,237,.4);background:rgba(124,58,237,.06)}
+    .nav-btn.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,58,237,.15) inset}
+
+    main{padding:24px}
+    .grid{display:grid;gap:16px}
+    .grid.cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
+    @media (max-width:1100px){.grid.cols-3{grid-template-columns:1fr 1fr}}
+    @media (max-width:780px){.app{grid-template-columns:1fr}aside{display:none}}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent), var(--card);
+      border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:var(--shadow);
+      transition:transform .2s ease, box-shadow .2s ease;
+      position:relative;overflow:hidden
+    }
+    .card:hover{transform:translateY(-3px)}
+    .card h3{margin:0 0 8px 0;font-size:14px;color:var(--muted);font-weight:600}
+    .kpi{display:flex;align-items:baseline;gap:10px}
+    .kpi .value{font-size:28px;font-weight:800}
+    .kpi .delta{font-size:12px;padding:4px 8px;border-radius:999px}
+    .delta.up{background:rgba(34,197,94,.15);color:var(--success)}
+    .delta.down{background:rgba(239,68,68,.15);color:var(--danger)}
+
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+    .input, select{
+      background:transparent;border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 12px;
+      outline:none;transition:border .2s ease
+    }
+    .input:focus, select:focus{border-color:rgba(124,58,237,.5)}
+    .btn{
+      border:1px solid var(--border);background:linear-gradient(180deg, rgba(124,58,237,.12), rgba(6,182,212,.12));
+      color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;letter-spacing:.2px;
+      transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover{transform: translateY(-1.5px); filter:saturate(120%)}
+    .btn:active{transform: translateY(0)}
+    .btn.secondary{background:transparent}
+
+    /* Fancy animated toggle */
+    .toggle{display:inline-flex;align-items:center;gap:10px}
+    .switch{width:48px;height:28px;background:rgba(255,255,255,.08);border-radius:999px;border:1px solid var(--border);position:relative;cursor:pointer}
+    .switch::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:999px;background:conic-gradient(from 180deg,var(--accent),var(--accent-2),var(--accent));
+      box-shadow:0 6px 14px rgba(0,0,0,.25);transition:left .25s ease}
+    .switch.active::after{left:22px}
+
+    /* Shimmer/skeleton for loading states */
+    .skeleton{
+      position:relative;overflow:hidden;background:linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.12), rgba(255,255,255,.06));
+      background-size:200% 100%;animation: shimmer 1.4s infinite
+    }
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+    .chart-wrap{height:340px}
+    .table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    .table th,.table td{padding:10px 12px;text-align:left}
+    .table thead th{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+    .table tbody tr{background:var(--panel);border:1px solid var(--border)}
+    .table tbody tr td:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px}
+    .table tbody tr td:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px}
+
+    /* Notification (animated) */
+    .toast{position:fixed;right:18px;bottom:18px;background:var(--panel);border:1px solid var(--border);padding:12px 14px;border-radius:14px;box-shadow:var(--shadow);display:none}
+    .toast.show{display:block;animation: pop .2s ease}
+    @keyframes pop{from{transform:translateY(8px);opacity:.0}to{transform:translateY(0);opacity:1}}
+  </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Sales Forecasting Dashboard</h1>
-    <h2> Powered by : Neuronex </h2>
-    <p>Predict future revenue and optimize your strategy</p>
+  <div class="app" id="app">
+    <aside>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="title">Sales Forecasting</div>
+          <div class="subtitle">Prediction & Analysis</div>
+        </div>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-label">Navigation</div>
+        <button class="nav-btn active" data-section="dashboard">📊 Dashboard</button>
+        <button class="nav-btn" data-section="dataset">📁 Dataset</button>
+        <button class="nav-btn" data-section="modeling">🧠 Modeling</button>
+        <button class="nav-btn" data-section="reports">📄 Reports</button>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-label">Theme</div>
+        <div class="toggle">
+          <span class="subtitle">Light</span>
+          <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+          <span class="subtitle">Dark</span>
+        </div>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-label">Quick Actions</div>
+        <button class="nav-btn" id="btnExport">⬇️ Export Forecast CSV</button>
+        <button class="nav-btn" id="btnSnapshot">📸 Export PNG Snapshot</button>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-label">Project Operated </div>
+        <div class="subtitle"></div>
+        <div style="margin-top:6px;font-weight:700">Powered by : Neuronex </div>
+      </div>
+    </aside>
+
+    <section>
+      <header>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="title" style="font-size:18px">Dashboard</div>
+          <div class="subtitle">Interactive interface for analysis & forecasts</div>
+        </div>
+        <div class="toolbar">
+          <input type="date" class="input" id="fromDate" />
+          <input type="date" class="input" id="toDate" />
+          <select id="horizon" class="input">
+            <option value="7">Horizon: 7 days</option>
+            <option value="14">Horizon: 14 days</option>
+            <option value="30" selected>Horizon: 30 days</option>
+            <option value="90">Horizon: 90 days</option>
+          </select>
+          <select id="model" class="input">
+            <option>Naive Baseline</option>
+            <option>Moving Average</option>
+            <option selected>ARIMA (demo)</option>
+            <option>Prophet</option>
+            <option>Gradient Boosted Trees</option>
+          </select>
+          <button class="btn" id="btnRun">Run Forecast ▶</button>
+          <label class="btn secondary" for="fileInput">Upload CSV</label>
+          <input id="fileInput" type="file" accept=".csv" style="display:none" />
+        </div>
+      </header>
+
+      <main>
+        <div class="grid cols-3" id="kpis">
+          <div class="card">
+            <h3>Total Revenue</h3>
+            <div class="kpi"><div class="value" id="kpiRevenue">₹—</div><span class="delta up" id="kpiRevDelta">+—%</span></div>
+          </div>
+          <div class="card">
+            <h3>Forecasted Next 30d</h3>
+            <div class="kpi"><div class="value" id="kpiForecast">₹—</div><span class="delta up" id="kpiFcDelta">+—%</span></div>
+          </div>
+          <div class="card">
+            <h3>MAPE (Last Period)</h3>
+            <div class="kpi"><div class="value" id="kpiMape">—%</div><span class="delta down" id="kpiErrDelta">↓ better</span></div>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:16px">
+          <div class="card">
+            <h3>Sales · Historical + Forecast</h3>
+            <div class="chart-wrap"><canvas id="chartLine"></canvas></div>
+          </div>
+          <div class="card">
+            <h3>Category Breakdown</h3>
+            <div class="chart-wrap"><canvas id="chartBar"></canvas></div>
+          </div>
+          <div class="card">
+            <h3>Forecast Table</h3>
+            <div style="overflow:auto">
+              <table class="table" id="forecastTable">
+                <thead><tr><th>Date</th><th>Forecast</th><th>Lower</th><th>Upper</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>Notes</h3>
+          <div class="subtitle">Upload your CSV in the format: <strong>date,sales,category</strong>. This UI uses demo logic to generate forecasts and visuals. Plug in your model API later.</div>
+        </div>
+      </main>
+    </section>
   </div>
 
-  <div class="dashboard-container">
-    <div class="card">
-      <h3>Next Month Forecast</h3>
-      <p id="forecastValue">Estimated Revenue: ₹1,20,000</p>
-    </div>
+  <div class="toast" id="toast">Export ready</div>
 
-    <div class="card chart-container">
-      <canvas id="salesChart"></canvas>
-    </div>
-  </div>
+  <script>
+    // --- Theme toggle ---
+    const root = document.documentElement;
+    const themeSwitch = document.getElementById('themeSwitch');
+    const storedTheme = localStorage.getItem('theme') || 'dark';
+    if(storedTheme === 'light'){ root.classList.add('light'); themeSwitch.classList.add('active'); themeSwitch.setAttribute('aria-checked','true'); }
+    themeSwitch.addEventListener('click', ()=>{ root.classList.toggle('light'); themeSwitch.classList.toggle('active'); const isLight = root.classList.contains('light'); themeSwitch.setAttribute('aria-checked', String(isLight)); localStorage.setItem('theme', isLight?'light':'dark'); });
+    themeSwitch.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ themeSwitch.click(); e.preventDefault(); } });
 
-  <div style="text-align: center; margin-top: 30px;">
-    <button class="button" onclick="generateForecast()">Generate New Forecast</button>
-  </div>
+    // --- Navigation (dummy sections for now) ---
+    document.querySelectorAll('.nav-btn[data-section]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+      })
+    })
 
-  <script src="script.js"></script>
+    // --- Utility helpers ---
+    const fmtINR = n => new Intl.NumberFormat('en-IN', {style:'currency', currency:'INR', maximumFractionDigits:0}).format(n||0);
+    const fmtPct = n => `${(n*100).toFixed(1)}%`;
+    const toast = (msg)=>{ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800); }
+
+    // --- Demo dataset generator ---
+    function genSeries(days=180){
+      const out=[]; const today=new Date();
+      for(let i=days; i>=0; i--){
+        const d=new Date(today); d.setDate(d.getDate()-i);
+        const base= 70000 + 15000*Math.sin(i/14) + 9000*Math.cos(i/30);
+        const noise=(Math.random()-0.5)*8000;
+        out.push({date:d, sales: Math.max(15000, Math.round(base+noise)), category: ['Electronics','Grocery','Fashion','Home'][i%4]});
+      }
+      return out;
+    }
+
+    let rows = genSeries(240);
+
+    // --- Simple moving average forecast (demo) ---
+    function forecast(series, horizon=30){
+      const window=14; // days
+      const fc=[]; const last= series.at(-1)?.sales || 0;
+      // compute SMA of last window
+      const sma = series.slice(-window).reduce((a,b)=>a+b.sales,0)/window;
+      const drift = (series.at(-1).sales - series.at(-window).sales)/window; // simple trend
+      for(let i=1;i<=horizon;i++){
+        const base = sma + drift*i;
+        const sd = 0.12*base; // dummy uncertainty band
+        const d = new Date(series.at(-1).date); d.setDate(d.getDate()+i);
+        fc.push({date:d, yhat: Math.max(0, Math.round(base)), yhat_lower: Math.round(base - 1.28*sd), yhat_upper: Math.round(base + 1.28*sd)});
+      }
+      return fc;
+    }
+
+    // --- KPIs ---
+    function updateKPIs(series, fc){
+      const last30 = series.slice(-30).reduce((a,b)=>a+b.sales,0);
+      const prev30 = series.slice(-60,-30).reduce((a,b)=>a+b.sales,0) || last30;
+      const growth = (last30 - prev30) / (prev30||1);
+      const fcSum = fc.reduce((a,b)=>a+b.yhat,0);
+      const mape = (Math.random()*0.12 + 0.06); // placeholder
+      document.getElementById('kpiRevenue').textContent = fmtINR(last30);
+      document.getElementById('kpiRevDelta').textContent = (growth>=0?'+':'') + (growth*100).toFixed(1) + '%';
+      document.getElementById('kpiRevDelta').className = 'delta ' + (growth>=0?'up':'down');
+      document.getElementById('kpiForecast').textContent = fmtINR(fcSum);
+      document.getElementById('kpiFcDelta').textContent = '+'+(fcSum/last30*100).toFixed(1)+'%';
+      document.getElementById('kpiMape').textContent = (mape*100).toFixed(1)+'%';
+      document.getElementById('kpiErrDelta').className = 'delta ' + (mape<.15?'down':'up');
+    }
+
+    // --- Charts ---
+    const lineCtx = document.getElementById('chartLine');
+    const barCtx  = document.getElementById('chartBar');
+    let lineChart, barChart;
+
+    function renderCharts(series, fc){
+      const histLabels = series.map(r=> r.date.toISOString().slice(0,10));
+      const histData   = series.map(r=> r.sales);
+      const fcLabels   = fc.map(r=> r.date.toISOString().slice(0,10));
+      const fcData     = fc.map(r=> r.yhat);
+      const lowerData  = fc.map(r=> r.yhat_lower);
+      const upperData  = fc.map(r=> r.yhat_upper);
+
+      if(lineChart) lineChart.destroy();
+      lineChart = new Chart(lineCtx, {
+        type:'line',
+        data:{
+          labels:[...histLabels, ...fcLabels],
+          datasets:[
+            {label:'Historical', data:[...histData, ...Array(fcData.length).fill(null)], tension:.3, borderWidth:2, pointRadius:0},
+            {label:'Forecast', data:[...Array(histData.length).fill(null), ...fcData], borderDash:[6,6], tension:.3, borderWidth:2, pointRadius:0},
+            {label:'Lower', data:[...Array(histData.length).fill(null), ...lowerData], borderWidth:1, pointRadius:0},
+            {label:'Upper', data:[...Array(histData.length).fill(null), ...upperData], borderWidth:1, pointRadius:0},
+          ]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{labels:{boxWidth:12}}, tooltip:{mode:'index', intersect:false}},
+          scales:{ x:{ grid:{display:false}}, y:{ grid:{color:'rgba(148,163,184,.2)'}} }
+        }
+      });
+
+      // Category bar chart
+      const cats={};
+      series.slice(-90).forEach(r=>{ cats[r.category]=(cats[r.category]||0)+r.sales; });
+      const labels=Object.keys(cats); const values=Object.values(cats);
+      if(barChart) barChart.destroy();
+      barChart = new Chart(barCtx, { type:'bar', data:{ labels, datasets:[{label:'Last 90 days', data:values}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
+    }
+
+    // --- Table ---
+    function renderTable(fc){
+      const tbody = document.querySelector('#forecastTable tbody');
+      tbody.innerHTML = '';
+      fc.forEach(r=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML = `<td>${r.date.toISOString().slice(0,10)}</td><td>${fmtINR(r.yhat)}</td><td>${fmtINR(r.yhat_lower)}</td><td>${fmtINR(r.yhat_upper)}</td>`;
+        tbody.appendChild(tr);
+      })
+    }
+
+    // --- CSV Export ---
+    function exportCSV(fc){
+      const header='date,forecast,lower,upper\n';
+      const rows = fc.map(r=>`${r.date.toISOString().slice(0,10)},${r.yhat},${r.yhat_lower},${r.yhat_upper}`).join('\n');
+      const blob = new Blob([header+rows], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='forecast.csv'; a.click(); URL.revokeObjectURL(url);
+      toast('Forecast CSV exported');
+    }
+
+    // --- PNG Snapshot (chart) ---
+    function exportPNG(){
+      const url = lineCtx.toDataURL('image/png');
+      const a=document.createElement('a'); a.href=url; a.download='sales_forecast.png'; a.click();
+      toast('PNG snapshot exported');
+    }
+
+    // --- File upload (very simple CSV reader) ---
+    document.getElementById('fileInput').addEventListener('change', (e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload = ()=>{
+        try{
+          const text=reader.result.trim();
+          const lines=text.split(/\r?\n/); const header=lines.shift().split(',').map(s=>s.trim().toLowerCase());
+          const di=header.indexOf('date'), si=header.indexOf('sales'), ci=header.indexOf('category');
+          if(di===-1 || si===-1) throw new Error('CSV must include date and sales columns');
+          const parsed=lines.map(l=>{ const parts=l.split(','); return {date:new Date(parts[di]), sales:Number(parts[si]), category: ci>-1?parts[ci]:'General'} });
+          rows=parsed.filter(r=>!isNaN(r.date) && !isNaN(r.sales));
+          runAll(); toast('Dataset loaded');
+        }catch(err){ alert('Failed to parse CSV: '+err.message); }
+      }
+      reader.readAsText(file);
+    });
+
+    // --- Run pipeline ---
+    function runAll(){
+      // filter by date
+      const fd = document.getElementById('fromDate').value; const td=document.getElementById('toDate').value;
+      let series = rows;
+      if(fd){ const d=new Date(fd); series = series.filter(r=> r.date >= d); }
+      if(td){ const d=new Date(td); series = series.filter(r=> r.date <= d); }
+      // forecast
+      const horizon = Number(document.getElementById('horizon').value);
+      const fc = forecast(series, horizon);
+      updateKPIs(series, fc);
+      renderCharts(series, fc);
+      renderTable(fc);
+    }
+
+    // --- Buttons ---
+    document.getElementById('btnRun').addEventListener('click', runAll);
+    document.getElementById('btnExport').addEventListener('click', ()=>{
+      const horizon = Number(document.getElementById('horizon').value);
+      exportCSV(forecast(rows, horizon));
+    });
+    document.getElementById('btnSnapshot').addEventListener('click', exportPNG);
+
+    // --- Initial render ---
+    runAll();
+  </script>
 </body>
 </html>
+
