@@ -24,6 +24,55 @@
       --text-2:#c7d2fe;
       --shadow:0 10px 25px rgba(0,0,0,.35);
     }
+    /* 1) KPIs grid - phone pe single column */
+@media (max-width:600px){
+  .grid.cols-3 {
+    grid-template-columns: 1fr;
+  }
+  .kpi .value {
+    font-size: 22px; /* thoda chhota for mobile */
+  }
+}
+
+/* 2) Toolbar ko stack kar do */
+@media (max-width:700px){
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .toolbar .input, 
+  .toolbar .btn, 
+  .toolbar select {
+    width: 100%;
+  }
+}
+
+/* 3) Cards full width mobile pe */
+@media (max-width:700px){
+  .card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .chart-wrap {
+    height: 260px; /* chhoti screen ke liye kam height */
+  }
+}
+
+/* 4) Header ka title stack ho jaye */
+@media (max-width:500px){
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  header .title {
+    font-size: 16px;
+  }
+  header .subtitle {
+    font-size: 12px;
+  }
+}
+
     :root.light{
       --bg:#f7f8fc;
       --panel:#ffffff;
@@ -152,6 +201,7 @@
     @keyframes pop{from{transform:translateY(8px);opacity:.0}to{transform:translateY(0);opacity:1}}
   </style>
 </head>
+<script src="app.js"></script>
 <body>
   <div class="app" id="app">
     <aside>
@@ -446,7 +496,7 @@
 
     // --- Initial render ---
     runAll();
+    
   </script>
 </body>
 </html>
-
